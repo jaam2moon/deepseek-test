@@ -1,0 +1,71 @@
+Pattern Name,Category,Direction,How It Looks
+Hammer,Single,Bullish,Small body at the top with a long lower wick (2x+ body) and little to no upper wick
+Inverted Hammer,Single,Bullish,Small body at the bottom with a long upper wick and little to no lower wick
+Dragonfly Doji,Single,Bullish,Open and close at the same high point with a very long lower wick and no upper wick
+Spinning Top (Bullish),Single,Bullish,Small body centered between nearly equal upper and lower wicks signaling indecision in a downtrend
+Marubozu (Bullish),Single,Bullish,Large full green candle with no wicks at all — pure buying pressure from open to close
+Hanging Man,Single,Bearish,Small body at the top with a long lower wick appearing after an uptrend — looks like a hammer but signals reversal
+Shooting Star,Single,Bearish,Small body at the bottom with a long upper wick and little to no lower wick appearing after an uptrend
+Gravestone Doji,Single,Bearish,Open and close at the same low point with a very long upper wick and no lower wick
+Spinning Top (Bearish),Single,Bearish,Small body centered between nearly equal upper and lower wicks signaling indecision in an uptrend
+Marubozu (Bearish),Single,Bearish,Large full red candle with no wicks at all — pure selling pressure from open to close
+Doji (Standard),Single,Neutral,Open and close at nearly the same price creating a cross or plus-sign shape
+Long-legged Doji,Single,Neutral,Open and close at the same level with very long upper and lower wicks showing extreme indecision
+Four-Price Doji,Single,Neutral,Open high low and close are all at the exact same price — a flat horizontal line
+Rickshaw Man,Single,Neutral,Long-legged doji where the body is centered perfectly between the two very long equal wicks
+Bullish Engulfing,Two,Bullish,A large green candle completely engulfs the prior small red candle's body
+Piercing Line,Two,Bullish,Red candle followed by a green candle that opens below the low and closes above the midpoint of the red candle
+Bullish Harami,Two,Bullish,A large red candle followed by a small green candle whose body fits entirely inside the prior candle
+Tweezer Bottom,Two,Bullish,Two candles with identical lows — first red then green — showing strong support at that level
+Bullish Kicker,Two,Bullish,A red candle followed by a gap-up green candle that opens above the prior open showing sudden momentum shift
+On-Neck Line,Two,Bullish,A red candle followed by a green candle that closes at or near the low of the previous candle
+Bullish Counterattack Line,Two,Bullish,A red candle followed by a green candle that opens lower but closes at the same close as the prior red candle
+Bearish Engulfing,Two,Bearish,A large red candle completely engulfs the prior small green candle's body
+Dark Cloud Cover,Two,Bearish,Green candle followed by a red candle that opens above the high and closes below the midpoint of the green candle
+Bearish Harami,Two,Bearish,A large green candle followed by a small red candle whose body fits entirely inside the prior candle
+Tweezer Top,Two,Bearish,Two candles with identical highs — first green then red — showing strong resistance at that level
+Bearish Kicker,Two,Bearish,A green candle followed by a gap-down red candle that opens below the prior open
+Bearish Counterattack Line,Two,Bearish,A green candle followed by a red candle that opens higher but closes at the same close as the prior green candle
+In-Neck Line,Two,Bearish,A red candle followed by a small green candle that closes just at or slightly above the close of the prior red candle
+Morning Star,Three,Bullish,Large red candle + small-bodied middle candle (gap down) + large green candle closing into the first candle's body
+Morning Doji Star,Three,Bullish,Same as Morning Star but the middle candle is a doji showing complete indecision before the reversal
+Three White Soldiers,Three,Bullish,Three consecutive long green candles each opening within and closing above the prior candle's body
+Three Inside Up,Three,Bullish,Bullish Harami followed by a third green candle that closes above the first candle's high confirming the reversal
+Three Outside Up,Three,Bullish,Bullish Engulfing followed by a third green candle closing higher confirming buying strength
+Bullish Abandoned Baby,Three,Bullish,Red candle + gap-down doji + gap-up green candle where the doji has no overlap with either candle
+Unique Three River Bottom,Three,Bullish,Large red candle + hammer-like second candle + small green candle all within the first candle's range
+Mat Hold (Bullish),Three,Bullish,Strong green candle followed by three small pullback candles then a breakout green candle above the first
+Evening Star,Three,Bearish,Large green candle + small-bodied middle candle (gap up) + large red candle closing into the first candle's body
+Evening Doji Star,Three,Bearish,Same as Evening Star but the middle candle is a doji showing complete indecision at the top
+Three Black Crows,Three,Bearish,Three consecutive long red candles each opening within and closing below the prior candle's body
+Three Inside Down,Three,Bearish,Bearish Harami followed by a third red candle closing below the first candle's low confirming the reversal
+Three Outside Down,Three,Bearish,Bearish Engulfing followed by a third red candle closing lower confirming selling pressure
+Bearish Abandoned Baby,Three,Bearish,Green candle + gap-up doji + gap-down red candle where the doji has no overlap with either candle
+Identical Three Crows,Three,Bearish,Three consecutive red candles where each opens at the prior candle's close with no gap
+Deliberation Pattern,Three,Bearish,Two long green candles followed by a small green candle at the top showing exhaustion of buying momentum
+Advance Block,Three,Bearish,Three green candles but each is progressively smaller with longer upper wicks showing weakening bulls
+Rising Three Methods,Multi,Bullish Continuation,Long green candle + three small red candles staying within the range + breakout green candle closing above the first
+Bullish Three-Line Strike,Multi,Bullish,Three white soldiers pattern followed by a single large red candle that engulfs all three but buyers resume
+Concealing Baby Swallow,Multi,Bullish,Four consecutive black marubozu candles where the third has a gap-down but is engulfed by the fourth
+Ladder Bottom,Multi,Bullish,Three black crows followed by a candle with a long upper wick then a gap-up white candle
+Stick Sandwich (Bullish),Multi,Bullish,Two red candles with the same close surrounding a green candle in between
+Falling Three Methods,Multi,Bearish Continuation,Long red candle + three small green candles within range + breakdown red candle closing below the first
+Bearish Three-Line Strike,Multi,Bearish,Three black crows followed by a single large green candle engulfing all three but sellers resume
+Descent Block,Multi,Bearish,Three large red candles progressively getting smaller showing slowing but continued selling
+Tower Top,Multi,Bearish,One or two large green candles followed by several small candles then one or two large red candles forming a tower shape
+Upside Tasuki Gap,Continuation,Bullish,Two green candles with a gap between them followed by a red candle that partially fills but doesn't close the gap
+Downside Tasuki Gap,Continuation,Bearish,Two red candles with a gap between them followed by a green candle that partially fills but doesn't close the gap
+Side-by-Side White Lines,Continuation,Bullish,A gap-up green candle followed by another green candle of similar size opening at the same level
+Rising Window,Continuation,Bullish,A gap up between two candles where the low of the second candle is above the high of the first
+Falling Window,Continuation,Bearish,A gap down between two candles where the high of the second candle is below the low of the first
+Separating Lines (Bullish),Continuation,Bullish,A red candle followed by a green candle that opens at the exact same price as the prior red candle's open
+Separating Lines (Bearish),Continuation,Bearish,A green candle followed by a red candle that opens at the exact same price as the prior green candle's open
+Hikkake Pattern,Special,Both,An inside bar followed by a false breakout in one direction then a sharp reversal in the opposite direction
+Hikkake Modified,Special,Both,A stronger version of the Hikkake with multiple inside bars before the false breakout and reversal
+Matching Low,Special,Bullish,Two red candles with the exact same closing price signaling strong support at that level
+Matching High,Special,Bearish,Two green candles with the exact same closing price signaling strong resistance at that level
+Belt Hold (Bullish),Special,Bullish,A long green marubozu candle that opens at its low with no lower wick signaling strong buying from the open
+Belt Hold (Bearish),Special,Bearish,A long red marubozu candle that opens at its high with no upper wick signaling strong selling from the open
+Breakaway (Bullish),Special,Bullish,Five candles starting with a large red candle gapping down then three red candles then a green candle gapping up
+Breakaway (Bearish),Special,Bearish,Five candles starting with a large green candle gapping up then three green candles then a red candle gapping down
+Thrusting Line,Special,Bearish,A red candle followed by a green candle that closes inside the prior body but below its midpoint — weak recovery

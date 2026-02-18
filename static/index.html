@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>วิเคราะห์รูปแบบแท่งเทียน</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+    background: #fff;
+    color: #000;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem 1rem;
+  }
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+  .subtitle {
+    color: #555;
+    margin-bottom: 2rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+  .container { max-width: 640px; width: 100%; }
+
+  /* Warmup banner */
+  .warmup-banner {
+    border: 1px solid #ddd;
+    padding: 1rem 1.25rem;
+    margin-bottom: 2rem;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .warmup-banner.ready { border-color: #000; }
+  .warmup-banner.failed { border-color: #ccc; }
+  .warmup-spinner {
+    width: 12px; height: 12px;
+    border: 1.5px solid #ddd;
+    border-top-color: #000;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+  .warmup-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .warmup-dot.ready { background: #000; }
+  .warmup-dot.failed { background: #ccc; }
+  .warmup-text { color: #444; }
+  .warmup-text strong { color: #000; font-weight: 600; }
+
+  /* Upload */
+  .upload-area {
+    border: 1px dashed #ccc;
+    padding: 3rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .upload-area:hover, .upload-area.dragover {
+    border-color: #000;
+  }
+  .upload-area.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+  .upload-area input { display: none; }
+  .upload-icon { font-size: 1.5rem; margin-bottom: 1rem; opacity: 0.3; }
+  .upload-text { color: #555; font-size: 0.8rem; }
+  .upload-text strong { color: #000; text-decoration: underline; }
+
+  /* Preview */
+  .preview { margin-top: 1.5rem; text-align: center; display: none; }
+  .preview img {
+    max-width: 100%;
+    max-height: 280px;
+    border: 1px solid #ddd;
+  }
+  .preview .filename {
+    color: #666;
+    font-size: 0.7rem;
+    margin-top: 0.5rem;
+  }
+
+  /* Button */
+  .analyze-btn {
+    display: none;
+    width: 100%;
+    padding: 0.75rem;
+    margin-top: 1.5rem;
+    background: #000;
+    color: #fff;
+    border: none;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .analyze-btn:hover { opacity: 0.85; }
+  .analyze-btn:disabled { background: #ddd; color: #aaa; cursor: not-allowed; }
+
+  /* Loading */
+  .loading { display: none; text-align: center; margin-top: 2rem; }
+  .spinner {
+    width: 20px; height: 20px;
+    border: 1.5px solid #ddd;
+    border-top-color: #000;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto 1rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { color: #555; font-size: 0.75rem; }
+
+  /* Result */
+  .result { display: none; margin-top: 2rem; }
+  .result-card {
+    border: 1px solid #ddd;
+    padding: 1.5rem;
+  }
+  .result-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid #ddd;
+  }
+  .pattern-name { font-size: 1.2rem; font-weight: 600; letter-spacing: 0.02em; }
+  .badge {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-family: inherit;
+  }
+  .badge-bullish { border: 1px solid #000; color: #000; }
+  .badge-bearish { border: 1px solid #555; color: #555; }
+  .badge-neutral { border: 1px solid #777; color: #777; }
+  .badge-category { border: 1px solid #888; color: #666; }
+  .badge-confidence-high { border: 1px solid #000; color: #000; }
+  .badge-confidence-medium { border: 1px solid #555; color: #555; }
+  .badge-confidence-low { border: 1px solid #777; color: #777; }
+
+  .result-section { margin-top: 1.25rem; }
+  .result-section h3 {
+    font-size: 0.65rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 0.5rem;
+    font-weight: 400;
+  }
+  .result-section p {
+    color: #333;
+    line-height: 1.7;
+    font-size: 0.8rem;
+  }
+
+  /* Collapsible */
+  .collapsible-header {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .collapsible-header::before {
+    content: '+';
+    font-size: 0.75rem;
+    color: #666;
+    width: 0.75rem;
+    transition: transform 0.2s;
+  }
+  .collapsible-header.open::before { content: '-'; }
+  .collapsible-body {
+    display: none;
+    margin-top: 0.5rem;
+    padding: 1rem;
+    background: #f7f7f7;
+    border: 1px solid #eee;
+    font-size: 0.75rem;
+    line-height: 1.7;
+    color: #444;
+    white-space: pre-wrap;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .collapsible-body.open { display: block; }
+
+  /* Cost */
+  .cost-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.4rem 1.5rem;
+    font-size: 0.75rem;
+    color: #555;
+    margin-top: 0.5rem;
+  }
+  .cost-grid .cost-label { }
+  .cost-grid .cost-value { text-align: right; color: #333; }
+  .cost-grid .cost-detail { padding-left: 1rem; font-size: 0.65rem; color: #777; }
+  .cost-grid .cost-total {
+    border-top: 1px solid #ddd;
+    padding-top: 0.5rem;
+    color: #000;
+    font-weight: 600;
+  }
+
+  /* Error */
+  .error {
+    display: none;
+    margin-top: 2rem;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    font-size: 0.8rem;
+    color: #333;
+  }
+  .error::before { content: 'ข้อผิดพลาด  '; color: #555; font-weight: 600; }
+
+  /* Reset */
+  .reset-btn {
+    display: none;
+    margin-top: 1.25rem;
+    padding: 0.5rem 1rem;
+    background: none;
+    border: 1px solid #ccc;
+    color: #555;
+    font-family: inherit;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .reset-btn:hover { border-color: #000; color: #000; }
+</style>
+</head>
+<body>
+
+<h1>วิเคราะห์รูปแบบแท่งเทียน</h1>
+<p class="subtitle">อัปโหลดภาพกราฟเพื่อระบุรูปแบบ</p>
+
+<div class="container">
+  <div class="warmup-banner" id="warmupBanner">
+    <div class="warmup-spinner" id="warmupSpinner"></div>
+    <span class="warmup-text" id="warmupText">กำลังเตรียมโมเดล...</span>
+  </div>
+
+  <div class="upload-area disabled" id="uploadArea">
+    <div class="upload-icon">[ ]</div>
+    <p class="upload-text">ลากไฟล์มาวางที่นี่ หรือ <strong>เลือกไฟล์</strong></p>
+    <p class="upload-text" style="margin-top:0.5rem;font-size:0.65rem;color:#888;">png / jpg / webp</p>
+    <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp">
+  </div>
+
+  <div class="preview" id="preview">
+    <img id="previewImg" alt="Chart preview">
+    <p class="filename" id="filename"></p>
+  </div>
+
+  <button class="analyze-btn" id="analyzeBtn">วิเคราะห์</button>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p class="loading-text" id="loadingText">กำลังวิเคราะห์...</p>
+  </div>
+
+  <div class="error" id="error"></div>
+
+  <div class="result" id="result">
+    <div class="result-card">
+      <div class="result-header">
+        <span class="pattern-name" id="patternName"></span>
+        <span class="badge" id="directionBadge"></span>
+        <span class="badge badge-category" id="categoryBadge"></span>
+        <span class="badge" id="confidenceBadge"></span>
+      </div>
+
+      <div class="result-section">
+        <h3>การวิเคราะห์</h3>
+        <p id="reasoning"></p>
+      </div>
+
+      <div class="result-section">
+        <h3 class="collapsible-header" id="descToggle">คำอธิบายกราฟ (ขั้นตอน 1)</h3>
+        <div class="collapsible-body" id="descBody"></div>
+      </div>
+
+      <div class="result-section" id="cotSection" style="display:none;">
+        <h3 class="collapsible-header" id="cotToggle">กระบวนการคิด (ขั้นตอน 2)</h3>
+        <div class="collapsible-body" id="cotBody"></div>
+      </div>
+
+      <div class="result-section" id="costSection" style="display:none;">
+        <h3>ค่าใช้จ่าย</h3>
+        <div class="cost-grid">
+          <span class="cost-label">วิชั่น (VL2)</span>
+          <span class="cost-value" id="costVision"></span>
+          <span class="cost-detail" id="costVisionDetail"></span>
+          <span></span>
+          <span class="cost-label">ตัววิเคราะห์</span>
+          <span class="cost-value" id="costReasoner"></span>
+          <span class="cost-detail" id="costReasonerDetail"></span>
+          <span></span>
+          <span class="cost-label cost-total">รวม</span>
+          <span class="cost-value cost-total" id="costTotal"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="reset-btn" id="resetBtn">รีเซ็ต</button>
+</div>
+
+<script>
+const uploadArea = document.getElementById('uploadArea');
+const fileInput = document.getElementById('fileInput');
+const preview = document.getElementById('preview');
+const previewImg = document.getElementById('previewImg');
+const filename = document.getElementById('filename');
+const analyzeBtn = document.getElementById('analyzeBtn');
+const loading = document.getElementById('loading');
+const loadingText = document.getElementById('loadingText');
+const error = document.getElementById('error');
+const result = document.getElementById('result');
+const resetBtn = document.getElementById('resetBtn');
+const warmupBanner = document.getElementById('warmupBanner');
+const warmupSpinner = document.getElementById('warmupSpinner');
+const warmupText = document.getElementById('warmupText');
+
+let selectedFile = null;
+let modelReady = false;
+
+// Poll warmup status
+async function pollWarmup() {
+  try {
+    const resp = await fetch('/warmup');
+    const data = await resp.json();
+
+    if (data.state === 'ready') {
+      modelReady = true;
+      warmupBanner.classList.add('ready');
+      warmupSpinner.remove();
+      const dot = document.createElement('div');
+      dot.className = 'warmup-dot ready';
+      warmupBanner.insertBefore(dot, warmupText);
+      warmupText.innerHTML = '<strong>พร้อม</strong> &mdash; โมเดลอุ่นเครื่องแล้ว (' + data.elapsed_secs + ' วินาที)';
+      uploadArea.classList.remove('disabled');
+      return;
+    }
+
+    if (data.state === 'failed') {
+      warmupBanner.classList.add('failed');
+      warmupSpinner.remove();
+      const dot = document.createElement('div');
+      dot.className = 'warmup-dot failed';
+      warmupBanner.insertBefore(dot, warmupText);
+      warmupText.innerHTML = '<strong>ล้มเหลว</strong> &mdash; ' + data.message;
+      uploadArea.classList.remove('disabled');
+      modelReady = true; // allow trying anyway
+      return;
+    }
+
+    warmupText.textContent = data.message;
+    setTimeout(pollWarmup, 2000);
+  } catch (e) {
+    setTimeout(pollWarmup, 3000);
+  }
+}
+
+pollWarmup();
+
+uploadArea.addEventListener('click', () => { if (!uploadArea.classList.contains('disabled')) fileInput.click(); });
+uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); if (!uploadArea.classList.contains('disabled')) uploadArea.classList.add('dragover'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+uploadArea.addEventListener('drop', (e) => {
+  e.preventDefault();
+  uploadArea.classList.remove('dragover');
+  if (!uploadArea.classList.contains('disabled') && e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', () => { if (fileInput.files.length) handleFile(fileInput.files[0]); });
+
+function handleFile(file) {
+  if (!file.type.startsWith('image/')) {
+    showError('กรุณาอัปโหลดไฟล์ภาพ (PNG, JPG หรือ WEBP)');
+    return;
+  }
+  selectedFile = file;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    previewImg.src = e.target.result;
+    preview.style.display = 'block';
+    filename.textContent = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+    analyzeBtn.style.display = 'block';
+    error.style.display = 'none';
+    result.style.display = 'none';
+    resetBtn.style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+analyzeBtn.addEventListener('click', async () => {
+  if (!selectedFile) return;
+
+  analyzeBtn.disabled = true;
+  loading.style.display = 'block';
+  error.style.display = 'none';
+  result.style.display = 'none';
+  resetBtn.style.display = 'none';
+  loadingText.textContent = 'ขั้นตอน 1: วิเคราะห์ภาพ...';
+
+  const formData = new FormData();
+  formData.append('image', selectedFile);
+
+  const startTime = Date.now();
+  const timer = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    if (elapsed > 15) {
+      loadingText.textContent = 'ขั้นตอน 2: ระบุรูปแบบ... ' + elapsed + ' วินาที';
+    } else {
+      loadingText.textContent = 'ขั้นตอน 1: วิเคราะห์ภาพ... ' + elapsed + ' วินาที';
+    }
+  }, 1000);
+
+  try {
+    const resp = await fetch('/analyze', { method: 'POST', body: formData });
+    clearInterval(timer);
+
+    if (!resp.ok) {
+      const text = await resp.text();
+      throw new Error(text || 'วิเคราะห์ล้มเหลว (' + resp.status + ')');
+    }
+
+    const data = await resp.json();
+    showResult(data);
+  } catch (err) {
+    clearInterval(timer);
+    showError(err.message);
+  } finally {
+    analyzeBtn.disabled = false;
+    loading.style.display = 'none';
+  }
+});
+
+function showResult(data) {
+  document.getElementById('patternName').textContent = data.pattern;
+
+  const dirBadge = document.getElementById('directionBadge');
+  dirBadge.textContent = data.direction;
+  dirBadge.className = 'badge';
+  const dirLower = data.direction.toLowerCase();
+  if (dirLower.includes('bullish')) dirBadge.classList.add('badge-bullish');
+  else if (dirLower.includes('bearish')) dirBadge.classList.add('badge-bearish');
+  else dirBadge.classList.add('badge-neutral');
+
+  document.getElementById('categoryBadge').textContent = data.category;
+
+  const confBadge = document.getElementById('confidenceBadge');
+  confBadge.textContent = data.confidence;
+  confBadge.className = 'badge';
+  const confLower = data.confidence.toLowerCase();
+  if (confLower === 'high') confBadge.classList.add('badge-confidence-high');
+  else if (confLower === 'medium') confBadge.classList.add('badge-confidence-medium');
+  else confBadge.classList.add('badge-confidence-low');
+
+  document.getElementById('reasoning').textContent = data.reasoning;
+  document.getElementById('descBody').textContent = data.chart_description;
+
+  const cotSection = document.getElementById('cotSection');
+  if (data.chain_of_thought) {
+    cotSection.style.display = 'block';
+    document.getElementById('cotBody').textContent = data.chain_of_thought;
+  } else {
+    cotSection.style.display = 'none';
+  }
+
+  if (data.cost) {
+    const c = data.cost;
+    const THB_RATE = 31.24;
+    document.getElementById('costSection').style.display = 'block';
+    document.getElementById('costVision').textContent = '$' + c.vision_cost_usd.toFixed(6) + ' (~' + (c.vision_cost_usd * THB_RATE).toFixed(2) + ' บาท)';
+    document.getElementById('costVisionDetail').textContent = c.vision_seconds.toFixed(1) + ' วินาที gpu';
+    document.getElementById('costReasoner').textContent = '$' + c.reasoner_cost_usd.toFixed(6) + ' (~' + (c.reasoner_cost_usd * THB_RATE).toFixed(2) + ' บาท)';
+    document.getElementById('costReasonerDetail').textContent =
+      c.reasoner_prompt_tokens + ' เข้า / ' +
+      c.reasoner_completion_tokens + ' ออก / ' +
+      c.reasoner_reasoning_tokens + ' คิดวิเคราะห์';
+    document.getElementById('costTotal').textContent = '$' + c.total_cost_usd.toFixed(6) + ' (~' + (c.total_cost_usd * THB_RATE).toFixed(2) + ' บาท)';
+  }
+
+  result.style.display = 'block';
+  resetBtn.style.display = 'inline-block';
+}
+
+function showError(msg) {
+  error.textContent = msg;
+  error.style.display = 'block';
+  resetBtn.style.display = 'inline-block';
+}
+
+document.querySelectorAll('.collapsible-header').forEach(header => {
+  header.addEventListener('click', () => {
+    header.classList.toggle('open');
+    const body = header.nextElementSibling;
+    body.classList.toggle('open');
+  });
+});
+
+resetBtn.addEventListener('click', () => {
+  selectedFile = null;
+  fileInput.value = '';
+  preview.style.display = 'none';
+  analyzeBtn.style.display = 'none';
+  result.style.display = 'none';
+  error.style.display = 'none';
+  resetBtn.style.display = 'none';
+  loading.style.display = 'none';
+});
+</script>
+</body>
+</html>

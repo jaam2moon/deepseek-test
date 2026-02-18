@@ -1,1 +1,7 @@
 /docs
+CLAUDE.md
+/target
+.env
+*.swp
+*.swo
+*~
