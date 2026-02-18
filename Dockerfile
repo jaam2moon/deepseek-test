@@ -6,8 +6,9 @@ COPY Cargo.toml Cargo.lock ./
 # Create dummy main.rs to cache dependencies
 RUN mkdir src && echo "fn main() {}" > src/main.rs
 RUN cargo build --release 2>/dev/null || true
-# Copy real source and rebuild
+# Copy real source and static files, then rebuild
 COPY src/ src/
+COPY static/ static/
 RUN touch src/main.rs && cargo build --release
 
 # Stage 2: Runtime
